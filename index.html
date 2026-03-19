@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gia Luân: Game Rượt Đuổi</title>
+    <style>
+        body { margin: 0; background: #1a1a2e; overflow: hidden; touch-action: none; font-family: sans-serif; }
+        canvas { display: block; }
+        #info { position: absolute; top: 10px; width: 100%; text-align: center; color: white; font-size: 20px; font-weight: bold; pointer-events: none; }
+    </style>
+</head>
+<body>
+    <div id="info">Điểm: <span id="score">0</span></div>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const scoreElement = document.getElementById("score");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let score = 0;
+        let gameActive = true;
+
+        let player = { x: canvas.width/2, y: canvas.height/2, size: 20, color: "#00d2ff" };
+        let enemy = { x: 50, y: 50, size: 25, color: "#ff4757", speed: 2 };
+
+        // Điều khiển bằng tay
+        window.addEventListener("touchmove", (e) => {
+            if(!gameActive) return;
+            let touch = e.touches[0];
+            player.x = touch.clientX;
+            player.y = touch.clientY;
+        });
+
+        function update() {
+            if (!gameActive) return;
+
+            // Địch đuổi theo người chơi
+            let dx = player.x - enemy.x;
+            let dy = player.y - enemy.y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance > 0) {
+                enemy.x += (dx / distance) * enemy.speed;
+                enemy.y += (dy / distance) * enemy.speed;
+            }
+
+            // Tăng tốc độ theo thời gian
+            enemy.speed += 0.001;
+            score++;
+            scoreElement.innerText = Math.floor(score/10);
+
+            // Kiểm tra va chạm
+            if (distance < player.size + enemy.size - 10) {
+                gameActive = false;
+                alert("BỊ BẮT RỒI! Điểm của bạn: " + Math.floor(score/10));
+                location.reload();
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Vẽ người chơi (Tam giác)
+            ctx.fillStyle = player.color;
+            ctx.beginPath();
+            ctx.moveTo(player.x, player.y - player.size);
+            ctx.lineTo(player.x - player.size, player.y + player.size);
+            ctx.lineTo(player.x + player.size, player.y + player.size);
+            ctx.closePath();
+            ctx.fill();
+
+            // Vẽ kẻ địch (Hình tròn)
+            ctx.fillStyle = enemy.color;
+            ctx.beginPath();
+            ctx.arc(enemy.x, enemy.y, enemy.size, 0, Math.PI * 2);
+            ctx.fill();
+
+            update();
+            if (gameActive) requestAnimationFrame(draw);
+        }
+
+        draw();
+    </script>
+</body>
+</html>
