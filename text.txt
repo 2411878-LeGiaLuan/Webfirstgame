@@ -1,0 +1,39 @@
+import turtle
+
+# 1. Tạo Người chơi (Hình tam giác xanh)
+player = turtle.Turtle()
+player.shape("triangle")
+player.color("cyan")
+player.penup()
+
+# 2. Tạo Kẻ địch (Hình tròn đỏ)
+enemy = turtle.Turtle()
+enemy.shape("circle")
+enemy.color("red")
+enemy.penup()
+enemy.goto(100, 200)
+
+# 3. Hàm điều khiển bằng cách chạm màn hình
+def move_to_touch(x, y):
+    player.goto(x, y)
+
+# Đăng ký sự kiện chạm
+turtle.onscreenclick(move_to_touch)
+
+# 4. Vòng lặp rượt đuổi
+def game_loop():
+    # Kẻ địch đuổi theo người chơi
+    enemy.setheading(enemy.towards(player))
+    enemy.forward(2) 
+
+    # Nếu chạm nhau thì dừng
+    if player.distance(enemy) < 20:
+        player.write(" THUA RỒI!", font=("Arial", 20, "bold"))
+        return
+
+    # Chạy tiếp vòng lặp
+    turtle.ontimer(game_loop, 30)
+
+# Bắt đầu game
+game_loop()
+turtle.done()
