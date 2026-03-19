@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gia Luân: Siêu Cấp Bắn Gà 10 Level</title>
+    <title>Gia Luân: Bắn Gà Relax Version</title>
     <style>
         body { margin: 0; background: #000; overflow: hidden; touch-action: none; font-family: 'Arial', sans-serif; color: #fff; }
         canvas { display: block; background: radial-gradient(circle at center, #001529, #000); }
-        #ui { position: absolute; top: 15px; width: 100%; text-align: center; font-size: 18px; font-weight: bold; z-index: 10; pointer-events: none; letter-spacing: 1px; }
-        #overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); 
-                    display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20; text-align: center; backdrop-filter: blur(5px); }
-        .msg { font-size: 35px; color: #00d2ff; margin-bottom: 10px; font-weight: bold; text-shadow: 0 0 20px #00d2ff; }
-        .sub-msg { font-size: 18px; color: #ffd700; margin-bottom: 30px; }
-        .btn { background: linear-gradient(45deg, #ffd700, #ff8c00); color: #000; padding: 15px 50px; border-radius: 50px; font-weight: bold; cursor: pointer; border: none; text-transform: uppercase; font-size: 18px; box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
-        #victory { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center; pointer-events: none; z-index: 30; }
-        .win-text { font-size: 40px; font-weight: bold; background: linear-gradient(to right, #ef5350, #f48fb1, #7e57c2, #2196f3, #26c6da, #43a047, #eeff41, #f9a825, #ff5722); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: rainbow 2s linear infinite; }
+        #ui { position: absolute; top: 15px; width: 100%; text-align: center; font-size: 18px; font-weight: bold; z-index: 10; pointer-events: none; }
+        #overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); 
+                    display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20; text-align: center; }
+        .msg { font-size: 30px; color: #00d2ff; margin-bottom: 10px; font-weight: bold; }
+        .sub-msg { font-size: 16px; color: #ffd700; margin-bottom: 30px; }
+        .btn { background: #ffd700; color: #000; padding: 15px 40px; border-radius: 50px; font-weight: bold; border: none; text-transform: uppercase; font-size: 18px; }
+        #victory { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center; z-index: 30; }
+        .win-text { font-size: 35px; font-weight: bold; background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: rainbow 2s linear infinite; }
         @keyframes rainbow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
     </style>
 </head>
@@ -22,13 +22,13 @@
     <div id="ui">LEVEL: <span id="level">1</span>/10 | ĐIỂM: <span id="score">0</span><br><small id="weapon">Vũ khí: Súng cơ bản</small></div>
     
     <div id="overlay">
-        <div id="status" class="msg">GIA LUÂN KHAI CHIẾN!</div>
-        <div id="subStatus" class="sub-msg">Vượt qua 10 màn chơi để nhận bất ngờ</div>
-        <button id="actionBtn" class="btn">BẮT ĐẦU NGAY</button>
+        <div id="status" class="msg">SẴN SÀNG CHƯA?</div>
+        <div id="subStatus" class="sub-msg">Tốc độ đã được điều chỉnh mượt mà hơn</div>
+        <button id="actionBtn" class="btn">CHƠI NGAY</button>
     </div>
 
     <div id="victory">
-        <div class="win-text">CHÚC MỪNG GIA LUÂN!<br>BẠN LÀ CHIẾN BINH VŨ TRỤ XUẤT SẮC NHẤT!</div>
+        <div class="win-text">XUẤT SẮC QUÁ GIA LUÂN!<br>BẠN ĐÃ CHIẾN THẮNG 10 THỬ THÁCH!</div>
     </div>
 
     <canvas id="gameCanvas"></canvas>
@@ -48,8 +48,8 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        let gameActive = false, score = 0, level = 1, bullets = [], enemies = [], particles = [], boss = null;
-        let enemyDirection = 1, enemySpeed = 1.2, fireRate = 300;
+        let gameActive = false, score = 0, level = 1, bullets = [], enemies = [], particles = [];
+        let enemyDirection = 1, enemySpeed = 0.8, fireRate = 350; // GIẢM TỐC ĐỘ GỐC
         const player = { x: canvas.width / 2, y: canvas.height - 100, w: 50, h: 50 };
 
         window.addEventListener("touchmove", (e) => {
@@ -59,74 +59,57 @@
 
         function createEnemies() {
             enemies = [];
-            let rows = Math.min(3 + Math.floor(level/2), 7);
-            let cols = Math.floor(canvas.width / 55);
+            let rows = Math.min(2 + Math.floor(level/3), 6); 
+            let cols = Math.floor(canvas.width / 60);
             for (let r = 0; r < rows; r++) {
                 for (let c = 0; c < cols; c++) {
-                    enemies.push({ x: 30 + c * 50, y: 70 + r * 45, w: 30, h: 30, alive: true });
+                    enemies.push({ x: 30 + c * 55, y: 80 + r * 50, w: 35, h: 35, alive: true });
                 }
             }
         }
 
-        function createExplosion(x, y, color, count = 10) {
-            for (let i = 0; i < count; i++) {
+        function createExplosion(x, y, color) {
+            for (let i = 0; i < 12; i++) {
                 particles.push({ 
                     x, y, 
-                    vx: (Math.random() - 0.5) * 6, 
-                    vy: (Math.random() - 0.5) * 6, 
-                    alpha: 1, 
-                    color,
-                    size: Math.random() * 4 + 1
+                    vx: (Math.random() - 0.5) * 5, 
+                    vy: (Math.random() - 0.5) * 5, 
+                    alpha: 1, color 
                 });
             }
         }
 
-        function getWeaponName() {
-            if (level <= 2) return "Súng Đơn Cơ Bản";
-            if (level <= 4) return "Súng Đôi Cấp Lực";
-            if (level <= 6) return "Súng Ba Tia Siêu Cấp";
-            if (level <= 8) return "Laze Xanh Hủy Diệt";
-            return "Tên Lửa Tầm Nhiệt VIP";
-        }
-
         function shoot() {
             if (!gameActive) return;
-            
-            // Logic các loại đạn theo level
-            if (level <= 2) { // Đạn đơn
-                bullets.push({ x: player.x + 23, y: player.y, w: 4, h: 15, color: "#fff", type: "normal" });
-            } else if (level <= 4) { // Đạn đôi
-                bullets.push({ x: player.x + 10, y: player.y, w: 4, h: 15, color: "#00ff00", type: "normal" });
-                bullets.push({ x: player.x + 35, y: player.y, w: 4, h: 15, color: "#00ff00", type: "normal" });
-            } else if (level <= 6) { // Đạn 3 tia
-                bullets.push({ x: player.x + 23, y: player.y, w: 4, h: 15, color: "#ffff00", vx: 0 });
-                bullets.push({ x: player.x + 23, y: player.y, w: 4, h: 15, color: "#ffff00", vx: -2 });
-                bullets.push({ x: player.x + 23, y: player.y, w: 4, h: 15, color: "#ffff00", vx: 2 });
-            } else if (level <= 8) { // Laze
-                bullets.push({ x: player.x + 21, y: player.y - 20, w: 8, h: 30, color: "#00d2ff", type: "laze" });
-            } else { // Tên lửa
-                bullets.push({ x: player.x + 23, y: player.y, w: 10, h: 20, color: "#ff4757", type: "homing" });
-            }
+            let bColor = "#fff", bW = 5, bH = 18; // TĂNG KÍCH THƯỚC ĐẠN
 
-            setTimeout(shoot, Math.max(150, fireRate - (level * 10)));
+            if (level <= 2) {
+                bullets.push({ x: player.x + 22, y: player.y, w: bW, h: bH, color: "#fff", vx: 0 });
+            } else if (level <= 4) {
+                bullets.push({ x: player.x + 10, y: player.y, w: bW, h: bH, color: "#00ff00", vx: 0 });
+                bullets.push({ x: player.x + 35, y: player.y, w: bW, h: bH, color: "#00ff00", vx: 0 });
+            } else if (level <= 6) {
+                bullets.push({ x: player.x + 22, y: player.y, w: bW, h: bH, color: "#ffff00", vx: 0 });
+                bullets.push({ x: player.x + 22, y: player.y, w: bW, h: bH, color: "#ffff00", vx: -1.5 });
+                bullets.push({ x: player.x + 22, y: player.y, w: bW, h: bH, color: "#ffff00", vx: 1.5 });
+            } else if (level <= 8) {
+                bullets.push({ x: player.x + 20, y: player.y - 10, w: 10, h: 40, color: "#00d2ff", type: "laze" });
+            } else {
+                bullets.push({ x: player.x + 22, y: player.y, w: 12, h: 22, color: "#ff4757", type: "homing" });
+            }
+            setTimeout(shoot, 300); 
         }
 
         function update() {
             if (!gameActive) return;
 
             bullets.forEach((b, i) => {
-                b.y -= 8;
+                b.y -= 7;
                 if (b.vx) b.x += b.vx;
-                
-                // Tên lửa tầm nhiệt level 9-10 tự tìm gà
-                if (b.type === "homing" && enemies.length > 0) {
+                if (b.type === "homing") {
                     let target = enemies.find(e => e.alive);
-                    if (target) {
-                        if (b.x < target.x) b.x += 3;
-                        else b.x -= 3;
-                    }
+                    if (target) b.x += (target.x - b.x) * 0.05;
                 }
-                
                 if (b.y < -50) bullets.splice(i, 1);
             });
 
@@ -134,24 +117,22 @@
             enemies.forEach(e => {
                 if (!e.alive) return;
                 e.x += enemySpeed * enemyDirection;
-                if (e.x <= 5 || e.x >= canvas.width - e.w - 5) reachEdge = true;
-                if (e.y >= player.y - 20) endGame(false);
+                if (e.x <= 10 || e.x >= canvas.width - e.w - 10) reachEdge = true;
+                if (e.y >= player.y - 10) endGame();
             });
 
             if (reachEdge) {
                 enemyDirection *= -1;
-                enemies.forEach(e => e.y += 15);
+                enemies.forEach(e => e.y += 12); // GIẢM TỐC ĐỘ RƠI XUỐNG
             }
 
-            // Va chạm
             bullets.forEach((b, bi) => {
-                enemies.forEach((e, ei) => {
+                enemies.forEach((e) => {
                     if (e.alive && b.x < e.x + e.w && b.x + b.w > e.x && b.y < e.y + e.h && b.y + b.h > e.y) {
                         e.alive = false;
                         if (b.type !== "laze") bullets.splice(bi, 1);
-                        score += 10 * level;
+                        score += 10;
                         createExplosion(e.x + e.w/2, e.y + e.h/2, "#ffd700");
-                        if (window.navigator.vibrate) window.navigator.vibrate(20);
                     }
                 });
             });
@@ -162,44 +143,27 @@
             }
 
             particles.forEach((p, i) => {
-                p.x += p.vx; p.y += p.vy; p.alpha -= 0.02;
+                p.x += p.vx; p.y += p.vy; p.alpha -= 0.03;
                 if (p.alpha <= 0) particles.splice(i, 1);
             });
-
             scoreEl.innerText = score;
-            weaponEl.innerText = "Vũ khí: " + getWeaponName();
         }
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Vẽ Đạn
-            bullets.forEach(b => {
-                ctx.shadowBlur = 10; ctx.shadowColor = b.color;
-                ctx.fillStyle = b.color;
-                ctx.fillRect(b.x, b.y, b.w, b.h);
-            });
-            ctx.shadowBlur = 0;
-
-            // Vẽ Gà
-            ctx.font = "26px Arial";
+            bullets.forEach(b => { ctx.fillStyle = b.color; ctx.fillRect(b.x, b.y, b.w, b.h); });
+            ctx.font = "28px Arial";
             enemies.forEach(e => { if (e.alive) ctx.fillText("🐔", e.x, e.y + 24); });
-
-            // Vẽ Phi thuyền Gia Luân (Neon)
-            ctx.fillStyle = "#00d2ff"; ctx.shadowBlur = 15; ctx.shadowColor = "#00d2ff";
-            ctx.beginPath();
+            
+            // Phi thuyền Neon
+            ctx.fillStyle = "#00d2ff"; ctx.beginPath();
             ctx.moveTo(player.x + 25, player.y);
-            ctx.lineTo(player.x, player.y + 40);
-            ctx.lineTo(player.x + 50, player.y + 40);
-            ctx.closePath(); ctx.fill();
-            ctx.fillStyle = "#fff"; ctx.font = "bold 12px Arial"; ctx.fillText("G.LUÂN", player.x + 3, player.y + 35);
-            ctx.shadowBlur = 0;
+            ctx.lineTo(player.x, player.y + 45);
+            ctx.lineTo(player.x + 50, player.y + 45);
+            ctx.fill();
+            ctx.fillStyle = "#fff"; ctx.font = "bold 12px Arial"; ctx.fillText("G.LUÂN", player.x + 3, player.y + 38);
 
-            // Vẽ hạt nổ
-            particles.forEach(p => {
-                ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color;
-                ctx.fillRect(p.x, p.y, p.size, p.size);
-            });
+            particles.forEach(p => { ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 3, 3); });
             ctx.globalAlpha = 1;
 
             update();
@@ -209,37 +173,34 @@
         function nextLevel() {
             level++;
             levelEl.innerText = level;
-            enemySpeed += 0.4;
+            enemySpeed += 0.15; // TĂNG TỐC RẤT NHẸ
             createEnemies();
-            createExplosion(canvas.width/2, canvas.height/2, "#00ff00", 50);
+            weaponEl.innerText = "Vũ khí: Nâng cấp!";
         }
 
         function winGame() {
             gameActive = false;
             victoryEl.style.display = "block";
-            // Bắn pháo hoa liên tục
             setInterval(() => {
-                createExplosion(Math.random()*canvas.width, Math.random()*canvas.height, `hsl(${Math.random()*360}, 100%, 50%)`, 40);
-            }, 300);
+                createExplosion(Math.random()*canvas.width, Math.random()*canvas.height, `hsl(${Math.random()*360}, 100%, 50%)`);
+            }, 200);
         }
 
-        function endGame(isWin) {
+        function endGame() {
             gameActive = false;
             overlay.style.display = "flex";
-            statusEl.innerText = "GAME OVER";
-            subStatusEl.innerText = "Điểm của bạn: " + score;
-            actionBtn.innerText = "THỬ LẠI";
+            statusEl.innerText = "THỬ LẠI NHÉ!";
+            actionBtn.innerText = "CHƠI LẠI";
         }
 
         actionBtn.onclick = () => {
-            level = 1; score = 0; levelEl.innerText = level;
+            level = 1; score = 0; enemySpeed = 0.8;
             createEnemies();
             gameActive = true;
             overlay.style.display = "none";
             victoryEl.style.display = "none";
             shoot();
         };
-
         draw();
     </script>
 </body>
